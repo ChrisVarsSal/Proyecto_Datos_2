@@ -11,16 +11,20 @@ class Variable:
 class AnalizadorSemantico:
     def __init__(self):
         self.hashGlobal = {}
-        self.reservada = {'void': "void", 'int': "int", 'float': "float", 'string': "string",
-                          'if': "if", 'while': "while", 'return': "return"}
-        self.especiales = {'+': "+", '-': "-", ';': ";", '*': "*", ',': ",", '/': "/", '=': "=", '==': "==", '!=': "!=",
-                           '<': "<", '>': ">", ')': ")", '{': "{", '}': "}", '(': "("}
+        self.palabraReservada = {
+            'void': "void", 'int': "int", 'float': "float", 'string': "string",'if': "if", 
+            'while': "while", 'return': "return"
+                          }
+        self.caratecterEspecial = {
+            '+': "+", '-': "-", ';': ";", '*': "*", ',': ",", '/': "/", '=': "=", '==': "==", '!=':"!=",
+            '<': "<", '>': ">", ')': ")", '{': "{", '}': "}", '(': "("
+                }
 
     def guardarEnHashGlobal(self,var):
         self.hashGlobal[var.nombre] = var
 
 
-    def esString(self, s):
+    def varString(self, s):
         if s =='':
             return False
         return s[0] == -30 and s[s.size() - 1] == -99 or \
@@ -28,10 +32,10 @@ class AnalizadorSemantico:
                s[0] == 39 and s[s.size() - 1] == 39
         #return s.isalpha()
 
-    def esNumero(self,n):
+    def varInt(self,n):
         return (n.replace('.', '', 1).isdigit())
 
-    def es_flotante(self, variable):
+    def varFloat(self, variable):
         try:
             float(variable)
             return True
@@ -39,16 +43,16 @@ class AnalizadorSemantico:
             return False
 
     #WRAPPERS
-    def AnalizarCodigoFuente(self,string):
-        self._AnalizarCodigoFuente(string)
+    def AnalizadorCodigo(self,string):
+        self._AnalizadorCodigo(string)
 
-    def leyendoCodigo(self,codigo):
-        self._leyendoCodigo(codigo)
+    def LectorCodigo(self,codigo):
+        self._LectorCodigo(codigo)
 
     #Desarrollo de funciones
-    def _AnalizarCodigoFuente(self,n):
+    def _AnalizadorCodigo(self,n):
         nombreArchivo=n
-        contadorLinea = 1  # para ir contanto las lineas
+        contador = 1  # para ir contanto las lineas
         linea = []
         tokens = []
         funciones = []
@@ -73,28 +77,32 @@ class AnalizadorSemantico:
                         antes = tokens[len(tokens)-3]
                         despues = tokens[len(tokens)-1]
                         antes2 = self.hashGlobal.get(antes)
-                        if self.esNumero(despues):
+                        if self.varInt(despues):
                             if antes2.tipo == "int":
                                 EsIgual = False
                                 continue
                             elif antes2.tipo == "float":
-                                print("Error linea", contadorLinea,": Asignacion incorrecta '" + antes + "' (" + antes2.tipo + ") a 'int')\n")
+                                print("Error linea", contador,": Asignacion incorrecta '" + 
+                                      antes + "' (" + antes2.tipo + ") a 'int')\n")
                                 EsIgual = False
                                 continue
                             elif antes2.tipo == "string":
-                                print("Error linea", contadorLinea,": Asignacion incorrecta '" + antes + "' (" + antes2.tipo + ") a 'int')\n")
+                                print("Error linea", contador,": Asignacion incorrecta '" + 
+                                      antes + "' (" + antes2.tipo + ") a 'int')\n")
                                 EsIgual = False
                                 continue
-                        elif self.es_flotante(despues):
+                        elif self.varFloat(despues):
                             if antes2.tipo == "float":
                                 EsIgual = False
                                 continue
                             elif antes2.tipo == "int":
-                                print("Error linea", contadorLinea,": Asignacion incorrecta '" + antes + "' (" + antes2.tipo + ") a 'float')\n")
+                                print("Error linea", contador,": Asignacion incorrecta '" + 
+                                      antes + "' (" + antes2.tipo + ") a 'float')\n")
                                 EsIgual = False
                                 continue
                             elif antes2.tipo == "string":
-                                print("Error linea", contadorLinea,": Asignacion incorrecta '" + antes + "' (" + antes2.tipo + ") a 'float')\n")
+                                print("Error linea", contador,": Asignacion incorrecta '" + 
+                                      antes + "' (" + antes2.tipo + ") a 'float')\n")
                                 EsIgual = False
                                 continue
                         elif y[0] == '"' and y[len(y)-1] == '"':
@@ -102,11 +110,13 @@ class AnalizadorSemantico:
                                 EsIgual = False
                                 continue
                             elif antes2.tipo == "int":
-                                print("Error linea", contadorLinea,": Asignacion incorrecta '" + antes + "' (" + antes2.tipo + ") a 'string')\n")
+                                print("Error linea", contador,": Asignacion incorrecta '" + 
+                                      antes + "' (" + antes2.tipo + ") a 'string')\n")
                                 EsIgual = False
                                 continue
                             elif antes2.tipo == "float":
-                                print("Error linea", contadorLinea,": Asignacion incorrecta '" + antes + "' (" + antes2.tipo + ") a 'string')\n")
+                                print("Error linea", contador,": Asignacion incorrecta '" + 
+                                      antes + "' (" + antes2.tipo + ") a 'string')\n")
                                 EsIgual = False
                                 continue
                         elif despues in self.hashGlobal:
@@ -115,7 +125,8 @@ class AnalizadorSemantico:
                                 EsIgual = False
                                 continue
                             else:
-                                print("Error linea", contadorLinea, ": Asignacion incorrecta '"+antes+"' ("+antes2.tipo+") a '"+ despues+"' ("+despues2.tipo+")\n")
+                                print("Error linea", contador, ": Asignacion incorrecta '"+ 
+                                      antes +"' ("+antes2.tipo+") a '"+ despues+"' ("+despues2.tipo+")\n")
                                 EsIgual = False
                                 continue
                     if EsReturn:
@@ -124,32 +135,33 @@ class AnalizadorSemantico:
                             if varAux2.tipo == funciones[len(funciones)-1].tipo:
                                 continue
                             else:
-                                print("Error linea", contadorLinea, ": '" + y + "' el tipo de retorno no coincide con el tipo de la funcion\n")
+                                print("Error linea", contador, ": '" + y + 
+                                      "' el tipo de retorno no coincide con el tipo de la funcion\n")
                         EsReturn = False
-                    if y == self.reservada.get(y):
-                        if y == self.reservada.get("return"):
+                    if y == self.palabraReservada.get(y):
+                        if y == self.palabraReservada.get("return"):
                             EsReturn = True
                             continue
                         else:
                             tipoVariable = y
                             continue
-                    if (not self.esNumero(y) or not self.es_flotante(y) or self.esString(y)) and  y not in self.especiales:
+                    if (not self.varInt(y) or not self.varFloat(y) or self.varString(y)) and  y not in self.caratecterEspecial:
                         if tipoVariable != "":
                             var = Variable(tipoVariable,y)
                             var.alcance = alcance
                             var.id = "variable"
-                            var.linea = contadorLinea
+                            var.linea = contador
                             self.guardarEnHashGlobal(var)
                         else:
                             if y[0] == '"' and y[len(y)-1] == '"':
                                 continue
-                            if y != self.especiales.get(y) and y not in self.hashGlobal:
-                                print("Error linea", contadorLinea, ": " + y + " no esta declarada\n")
-                    elif y == self.especiales.get("}"):
+                            if y != self.caratecterEspecial.get(y) and y not in self.hashGlobal:
+                                print("Error linea", contador, ": " + y + " no esta declarada\n")
+                    elif y == self.caratecterEspecial.get("}"):
                             abreCorchetes = False
                             alcance -= 1
                             continue
-                    elif y == self.especiales.get("="):
+                    elif y == self.caratecterEspecial.get("="):
                         EsIgual = True
                         continue
 
@@ -157,60 +169,60 @@ class AnalizadorSemantico:
                 tipoVariable = ""
                 for y in word:
                     tokens.append(y)
-                    if y == self.reservada.get(y):
+                    if y == self.palabraReservada.get(y):
                         if abreParentesis:
                             tipoVariable = y
                             continue
                         tipoFuncion = y
                         continue
-                    if not self.esNumero(y) or not self.es_flotante(y) or self.esString(y):
-                        if abreParentesis and y in self.hashGlobal and not self.esNumero(y) and not self.es_flotante(y):
+                    if not self.varInt(y) or not self.varFloat(y) or self.varString(y):
+                        if abreParentesis and y in self.hashGlobal and not self.varInt(y) and not self.varFloat(y):
                             varAux = self.hashGlobal.get(y)
                             if varAux.alcance <= alcance-1:
                                 continue
                             else:
-                                print("Error linea", contadorLinea, ": '" + y + "' parametro no definido\n")
-                        if abreParentesis and y not in self.hashGlobal and not self.esNumero(y) and not self.es_flotante(y) and y not in self.especiales:
-                            if tokens[len(tokens)-2] in self.reservada:
+                                print("Error linea", contador, ": '" + y + "' parametro no definido\n")
+                        if abreParentesis and y not in self.hashGlobal and not self.varInt(y) and not self.varFloat(y) and y not in self.caratecterEspecial:
+                            if tokens[len(tokens)-2] in self.palabraReservada:
                                 #tipoVariable= tokens[len(tokens)-1]
                                 var = Variable(tipoVariable, y)
                                 var.alcance = alcance
                                 var.id = "variable"
-                                var.linea = contadorLinea
+                                var.linea = contador
                                 self.guardarEnHashGlobal(var)
                             else:
-                                print("Error linea", contadorLinea, ": '" + y + "' parametro no definido\n")
-                        if tipoFuncion != "" and y not in self.especiales and y not in self.hashGlobal:
+                                print("Error linea", contador, ": '" + y + "' parametro no definido\n")
+                        if tipoFuncion != "" and y not in self.caratecterEspecial and y not in self.hashGlobal:
                             fun = Variable(tipoFuncion,y)
                             fun.alcance = alcance
                             fun.id = "funcion"
-                            fun.linea = contadorLinea
+                            fun.linea = contador
                             self.guardarEnHashGlobal(fun)
                             funciones.append(fun)
                             continue
-                    if y == self.especiales.get("("):
+                    if y == self.caratecterEspecial.get("("):
                         abreParentesis = True
                         alcance += 1
                         continue
-                    if y == self.especiales.get(")"):
+                    if y == self.caratecterEspecial.get(")"):
                         abreParentesis = False
                         alcance -= 1
                         continue
-                    if y == self.especiales.get("{"):
+                    if y == self.caratecterEspecial.get("{"):
                         abreCorchetes = True
                         alcance += 1
                         continue
 
-            contadorLinea += 1
+            contador += 1
 
-    def _leyendoCodigo(self,codigo):
-        contador=1
+    def _LectorCodigo(self,codigo):
+        contadorLector=1
         archivo = open(codigo, "r", encoding="utf=8")
         linea = archivo.readlines()  # una lista de lineas
         archivo.close()
         for i in linea:
-            print(contador," "+i)
-            contador+=1
+            print(contadorLector," "+i)
+            contadorLector+=1
 
 
 
