@@ -1,6 +1,8 @@
 import analizador
 
 while True:
+    print("Proyecto 2 - Estructuras de datos")
+    print("\n")
     print("\n")
     print("Ingrese la opción que desea probar")
     print("1.Analizar el codigo correcto")
@@ -8,15 +10,15 @@ while True:
     print("3.Salir")
     opcion = input()
     if opcion == "1":
-        analizar = AnalizadorSemantico.AnalizadorSemantico()
-        analizar.leyendoCodigo("correcto.txt")
+        analisisA = analizador.Analizador();
+        analisisA.LectorCodigo("correcto.txt")
         print("\n")
-        analizar.AnalizarCodigoFuente("correcto.txt")
+        analisisA.AnalizarCodigoFuente("correcto.txt")
     elif opcion == "2":
-        analizar2 = AnalizadorSemantico.AnalizadorSemantico()
-        analizar2.leyendoCodigo("incorrecto.txt")
+        analisisB = analizador.Analizador()
+        analisisB.LectorCodigo("incorrecto.txt")
         print("\n")
-        analizar2.AnalizarCodigoFuente("incorrecto.txt")
+        analisisB.AnalizadorCodigo("incorrecto.txt")
     elif opcion == "3":
         break
 

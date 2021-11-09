@@ -8,7 +8,7 @@ class Variable:
         self.alcance = 0
 
 
-class AnalizadorSemantico:
+class Analizador:
     def __init__(self):
         self.hashGlobal = {}
         self.palabraReservada = {
@@ -22,19 +22,14 @@ class AnalizadorSemantico:
 
     def guardarEnHashGlobal(self,var):
         self.hashGlobal[var.nombre] = var
-
-
     def varString(self, s):
         if s =='':
             return False
         return s[0] == -30 and s[s.size() - 1] == -99 or \
                s[0] == 34 and s[s.size() - 1] == 34 or \
                s[0] == 39 and s[s.size() - 1] == 39
-        #return s.isalpha()
-
     def varInt(self,n):
         return (n.replace('.', '', 1).isdigit())
-
     def varFloat(self, variable):
         try:
             float(variable)
