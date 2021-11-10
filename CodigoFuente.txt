@@ -1,0 +1,6 @@
+string nombre ( int nada ) {
+    string prueba = nada 
+	
+} 
+string cadena = foo ( prueba ) 
+

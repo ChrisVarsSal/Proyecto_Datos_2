@@ -12,14 +12,14 @@ while True:
     opcion = input()
     if opcion == "1":
         analisisA = analizador.Analizador();
-        analisisA.LectorCodigo("correcto.txt")
+        analisisA.LectorCodigo("CodigoCorrecto.txt")
         print("\n")
-        analisisA.AnalizarCodigoFuente("correcto.txt")
+        analisisA.AnalizarCodigoFuente("CodigoCorrecto.txt")
     elif opcion == "2":
         analisisB = analizador.Analizador()
-        analisisB.LectorCodigo("incorrecto.txt")
+        analisisB.LectorCodigo("CodigoIncorrecto.txt")
         print("\n")
-        analisisB.AnalizadorCodigo("incorrecto.txt")
+        analisisB.AnalizadorCodigo("CodigoIncorrecto.txt")
     elif opcion == "3":
         break
 
