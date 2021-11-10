@@ -1,10 +1,11 @@
 import analizador
 
 while True:
-    print("Proyecto 2 - Estructuras de datos")
+    print("Proyecto 2 - Estructuras de datos - II Ciclo 2021")
+    print("Deiner Rodriguez Villalobos - Christofer Vargas Saldaña - Manfred Zamora Robles")
     print("\n")
     print("\n")
-    print("Ingrese la opción que desea probar")
+    print("--Ingrese la opción que desea probar--")
     print("1.Analizar el codigo correcto")
     print("2.Analizar el codigo incorrecto)")
     print("3.Salir")

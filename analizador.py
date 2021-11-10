@@ -22,14 +22,14 @@ class Analizador:
 
     def saveGlobalHash(self,var):
         self.hashGlobal[var.nombre] = var
+    def varInt(self,n):
+        return (n.replace('.', '', 1).isdigit())
     def varString(self, s):
         if s =='':
             return False
         return s[0] == -30 and s[s.size() - 1] == -99 or \
                s[0] == 34 and s[s.size() - 1] == 34 or \
                s[0] == 39 and s[s.size() - 1] == 39
-    def varInt(self,n):
-        return (n.replace('.', '', 1).isdigit())
     def varFloat(self, variable):
         try:
             float(variable)
@@ -40,91 +40,90 @@ class Analizador:
     #WRAPPERS
     def AnalizadorCodigo(self,string):
         self._AnalizadorCodigo(string)
-
     def LectorCodigo(self,codigo):
         self._LectorCodigo(codigo)
 
     #Desarrollo de funciones
     def _AnalizadorCodigo(self,n):
         nombreArchivo=n
-        contador = 1  # para ir contanto las lineas
+        tipoVar = " "
+        tipoFuncion = " "
+        palabraAnterior = " "
+        alcance = 0
+        contador = 1  # esta variable sirve para contar las lineas de codigo
         linea = []
-        tokens = []
         funciones = []
+        tokens = []
+        parentesis = False
+        funIgual = False
+        parentesisCuadrados = False
+        funReturn = False
         archivo = open(n, "r",encoding="utf=8")
         linea = archivo.readlines()  # una lista de lineas
         archivo.close()
-        tipoVar = ""
-        palabraAnterior = ""
-        tipoFuncion = ""
-        alcance = 0
-        parentesis = False
-        parentesisCuadrados = False
-        EsReturn = False
-        EsIgual = False
-        for x in linea:  # ir linea por linea del archivo
+        for x in linea:  #recorre linea por linea del archivo .txt
             word = x.split()
             if len(word) <= 4:
                 tipoVar = ""
                 for y in word:  # ir recorriendo los tokens de word
                     tokens.append(y)
-                    if EsIgual:
+                    if funIgual:
                         a = tokens[len(tokens)-3]
                         x = tokens[len(tokens)-1]
                         b = self.hashGlobal.get(a)
                         if self.varInt(x):
                             if b.tipo == "int":
-                                EsIgual = False
+                                funIgual = False
                                 continue
                             elif b.tipo == "float":
-                                print("Error linea", contador,": Asignacion incorrecta '" + 
+                                print("Error en la linea", contador,": Asignacion incorrecta '" + 
                                       a + "' (" + b.tipo + ") a 'int')\n")
-                                EsIgual = False
+                                funIgual = False
                                 continue
                             elif b.tipo == "string":
-                                print("Error linea", contador,": Asignacion incorrecta '" + 
+                                print("Error en la linea", contador,": Asignacion incorrecta '" + 
                                       a + "' (" + b.tipo + ") a 'int')\n")
-                                EsIgual = False
+                                funIgual = False
                                 continue
                         elif self.varFloat(x):
                             if b.tipo == "float":
-                                EsIgual = False
+                                funIgual = False
                                 continue
                             elif b.tipo == "int":
-                                print("Error linea", contador,": Asignacion incorrecta '" + 
+                                print("Error en la linea", contador,": Asignacion incorrecta '" + 
                                       a + "' (" + b.tipo + ") a 'float')\n")
-                                EsIgual = False
+                                funIgual = False
                                 continue
                             elif b.tipo == "string":
-                                print("Error linea", contador,": Asignacion incorrecta '" + 
+                                print("Error en la linea", contador,": Asignacion incorrecta '" + 
                                       a + "' (" + b.tipo + ") a 'float')\n")
-                                EsIgual = False
+                                funIgual = False
                                 continue
                         elif y[0] == '"' and y[len(y)-1] == '"':
                             if b.tipo == "string":
-                                EsIgual = False
+                                funIgual = False
                                 continue
                             elif b.tipo == "int":
                                 print("Error en la linea", contador,": Asignacion incorrecta '" + 
                                       a + "' (" + b.tipo + ") a 'string')\n")
-                                EsIgual = False
+                                funIgual = False
                                 continue
                             elif b.tipo == "float":
                                 print("Error en la linea", contador,": Asignacion incorrecta '" + 
                                       a + "' (" + b.tipo + ") a 'string')\n")
-                                EsIgual = False
+                                funIgual = False
                                 continue
-                        elif despues in self.hashGlobal:
-                            despues2 = self.hashGlobal.get(despues)
-                            if b.tipo == despues2.tipo:
-                                EsIgual = False
+                        elif w in self.hashGlobal:
+                            z = self.hashGlobal.get(w)
+                            if b.tipo == z.tipo:
+                                funIgual = False
                                 continue
                             else:
                                 print("Error en la linea", contador, ": Asignacion incorrecta '"+ 
-                                      a +"' ("+b.tipo+") a '"+ despues+"' ("+despues2.tipo+")\n")
-                                EsIgual = False
+                                      a +"' ("+b.tipo+") a '"+ w+"' ("+z.tipo+")\n")
+                                funIgual = False
                                 continue
-                    if EsReturn:
+                    if funReturn:
                         if y in self.hashGlobal:
                             varAux2 = self.hashGlobal.get(y)
                             if varAux2.tipo == funciones[len(funciones)-1].tipo:
@@ -132,10 +131,10 @@ class Analizador:
                             else:
                                 print("Error en la linea", contador, ": '" + y + 
                                       "' el tipo de retorno no coincide con el tipo de la funcion\n")
-                        EsReturn = False
+                        funReturn = False
                     if y == self.palabraReservada.get(y):
                         if y == self.palabraReservada.get("return"):
-                            EsReturn = True
+                            funReturn = True
                             continue
                         else:
                             tipoVar = y
@@ -157,7 +156,7 @@ class Analizador:
                             alcance -= 1
                             continue
                     elif y == self.caratecterEspecial.get("="):
-                        EsIgual = True
+                        funIgual = True
                         continue
             else:
                 tipoVar = ""
