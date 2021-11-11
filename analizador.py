@@ -22,14 +22,17 @@ class Analizador:
 
     def saveGlobalHash(self,var):
         self.hashGlobal[var.nombre] = var
+
     def varInt(self,n):
         return (n.replace('.', '', 1).isdigit())
+
     def varString(self, s):
         if s =='':
             return False
         return s[0] == -30 and s[s.size() - 1] == -99 or \
                s[0] == 34 and s[s.size() - 1] == 34 or \
                s[0] == 39 and s[s.size() - 1] == 39
+               
     def varFloat(self, variable):
         try:
             float(variable)
@@ -56,7 +59,7 @@ class Analizador:
         tokens = []
         parentesis = False
         funIgual = False
-        parentesisCuadrados = False
+        corchetes = False
         funReturn = False
         archivo = open(n, "r",encoding="utf=8")
         linea = archivo.readlines()  # una lista de lineas
@@ -152,7 +155,7 @@ class Analizador:
                             if y != self.caratecterEspecial.get(y) and y not in self.hashGlobal:
                                 print("Error en la linea", contador, ": " + y + " no esta declarada\n")
                     elif y == self.caratecterEspecial.get("}"):
-                            parentesisCuadrados = False
+                            corchetes = False
                             alcance -= 1
                             continue
                     elif y == self.caratecterEspecial.get("="):
@@ -204,7 +207,7 @@ class Analizador:
                         alcance -= 1
                         continue
                     if y == self.caratecterEspecial.get("{"):
-                        parentesisCuadrados = True
+                        corchetes = True
                         alcance += 1
                         continue
             contador += 1
