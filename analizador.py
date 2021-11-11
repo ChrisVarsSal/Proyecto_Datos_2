@@ -27,12 +27,11 @@ class Analizador:
         return (n.replace('.', '', 1).isdigit())
 
     def varString(self, s):
-        if s =='':
+        if (s[0]=='"' and s[len(s)-1]=='"') or (s[0]=="'" and s[len(s)-1]=="'"):
+            return True
+        else:
             return False
-        return s[0] == -30 and s[s.size() - 1] == -99 or \
-               s[0] == 34 and s[s.size() - 1] == 34 or \
-               s[0] == 39 and s[s.size() - 1] == 39
-               
+
     def varFloat(self, variable):
         try:
             float(variable)
