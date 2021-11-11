@@ -54,11 +54,11 @@ class Analizador:
             return False
 
     #WRAPPERS
-    def AnalizadorCodigo(self,string):
-        self._AnalizadorCodigo(string)
-        
-    def LectorCodigo(self,codigo):
-        self._LectorCodigo(codigo)
+    def AnalizadorCodigo(self,nomArchivo):
+        self._AnalizadorCodigo(nomArchivo)
+
+    def LectorCodigo(self,nomArchivo):
+        self.printArchivo(printArchivo)
 
     #Desarrollo de funciones
     def _AnalizadorCodigo(self,nomArchivo):
@@ -229,11 +229,12 @@ class Analizador:
                         continue
             contador += 1
 
-    def _LectorCodigo(self,codigo):
-        contadorLector=1
-        archivo = open(codigo, "r", encoding="utf=8")
-        linea = archivo.readlines()  # una lista de lineas
+    def printArchivo(self,nomArchivo):
+        archivo = open(nomArchivo, "r", encoding="utf=8")
+        linea = archivo.readlines()
         archivo.close()
+
+        contadorLector = 1
         for i in linea:
-            print(contadorLector," "+i)
+            print(contadorLector," ",i)
             contadorLector+=1
