@@ -23,15 +23,18 @@ class Analizador:
     def saveGlobalHash(self,var):
         self.hashGlobal[var.nombre] = var
 
+    #retorna un valor booleno dependiendo si 'n' es un numero, ya se int o float
     def varInt(self,n):
         return (n.replace('.', '', 1).isdigit())
 
+    #retorna un valor booleno dependiendo si 's' es tipo string
     def varString(self, s):
         if (s[0]=='"' and s[len(s)-1]=='"') or (s[0]=="'" and s[len(s)-1]=="'"):
             return True
         else:
             return False
 
+    #retorna un valor booleno dependiendo si 'variables' es tipo float
     def varFloat(self, variable):
         try:
             float(variable)
@@ -39,30 +42,45 @@ class Analizador:
         except:
             return False
 
+    #retorna el contenido de un archivo, en forma de array donde cada elemento es una linea del .txt
+    def cargarContArchivo(self,nomArchivo)
+        try:
+            archivo = open(nomArchivo, "r", encoding="utf=8")
+            lineas = archivo.readlines() 
+            archivo.close()
+            return lineas
+        except:
+            print("Ocurrio un error con al cargar los datos del archivo")
+            return False
+
     #WRAPPERS
     def AnalizadorCodigo(self,string):
         self._AnalizadorCodigo(string)
+        
     def LectorCodigo(self,codigo):
         self._LectorCodigo(codigo)
 
     #Desarrollo de funciones
-    def _AnalizadorCodigo(self,n):
-        nombreArchivo=n
-        tipoVar = " "
-        tipoFuncion = " "
-        palabraAnterior = " "
+    def _AnalizadorCodigo(self,nomArchivo):
+
+        linea = cargarContArchivo(nomArchivo)
+        #por si hubo algun problema al cargar el contenido del archivo
+        if linea == False:
+            return
+        
+        tipoVar = ""
+        tipoFuncion = ""
+        palabraAnterior = ""
         alcance = 0
         contador = 1  # esta variable sirve para contar las lineas de codigo
-        linea = []
         funciones = []
         tokens = []
+
         parentesis = False
         funIgual = False
         corchetes = False
         funReturn = False
-        archivo = open(n, "r",encoding="utf=8")
-        linea = archivo.readlines()  # una lista de lineas
-        archivo.close()
+        
         for x in linea:  #recorre linea por linea del archivo .txt
             word = x.split()
             if len(word) <= 4:
