@@ -11,11 +11,11 @@ class Variable:
 class Analizador:
     def __init__(self):
         self.hashGlobal = {}
-        self.palabraReservada = {
+        self.tokensReservados = {
             'void': "void", 'int': "int", 'float': "float", 'string': "string",'if': "if", 
             'while': "while", 'return': "return"
                           }
-        self.caratecterEspecial = {
+        self.tokensEspeciales= {
             '+': "+", '-': "-", ';': ";", '*': "*", ',': ",", '/': "/", '=': "=", '==': "==", '!=':"!=",
             '<': "<", '>': ">", ')': ")", '{': "{", '}': "}", '(': "("
                 }
@@ -88,6 +88,9 @@ class Analizador:
                 for y in word:  # ir recorriendo los tokens de word
                     tokens.append(y)
                     if funIgual:
+                        #ejemplo int x = 2, tokenAnt = x
+                        #tokenDes = 2
+                        #tokenAnt2 = busca si esa variable(x) ya fue definida
                         tokenAnt = tokens[len(tokens)-3]
                         tokenDes = tokens[len(tokens)-1]
                         tokenAnt2 = self.hashGlobal.get(tokenAnt)
@@ -144,14 +147,14 @@ class Analizador:
                             else:
                                 print("Error linea", contador, ": '" + y + "' el tipo de retorno no coincide con el tipo de la funcion\n")
                         funReturn = False
-                    if y == self.reservada.get(y):
-                        if y == self.reservada.get("return"):
+                    if y == self.tokensReservados.get(y):
+                        if y == self.tokensReservados.get("return"):
                             funReturn = True
                             continue
                         else:
                             tipoVar = y
                             continue
-                    if (not self.esNum(y) or not self.esFloat(y) or self.esString(y)) and  y not in self.especiales:
+                    if (not self.esNum(y) or not self.esFloat(y) or self.esString(y)) and  y not in self.tokensEspeciales:
                         if tipoVar != "":
                             var = Variable(tipoVar,y)
                             var.alcance = alcance
@@ -161,13 +164,13 @@ class Analizador:
                         else:
                             if y[0] == '"' and y[len(y)-1] == '"':
                                 continue
-                            if y != self.especiales.get(y) and y not in self.hashGlobal:
+                            if y != self.tokensEspeciales.get(y) and y not in self.hashGlobal:
                                 print("Error linea", contador, ": " + y + " no esta declarada\n")
-                    elif y == self.especiales.get("}"):
+                    elif y == self.tokensEspeciales.get("}"):
                             corchetes = False
                             alcance -= 1
                             continue
-                    elif y == self.especiales.get("="):
+                    elif y == self.tokensEspeciales.get("="):
                         funIgual = True
                         continue
 
@@ -175,7 +178,7 @@ class Analizador:
                 tipoVar = ""
                 for y in word:
                     tokens.append(y)
-                    if y == self.reservada.get(y):
+                    if y == self.tokensReservados.get(y):
                         if parentesis:
                             tipoVar = y
                             continue
@@ -188,8 +191,8 @@ class Analizador:
                                 continue
                             else:
                                 print("Error linea", contador, ": '" + y + "' parametro no definido\n")
-                        if parentesis and y not in self.hashGlobal and not self.esNum(y) and not self.esFloat(y) and y not in self.especiales:
-                            if tokens[len(tokens)-2] in self.reservada:
+                        if parentesis and y not in self.hashGlobal and not self.esNum(y) and not self.esFloat(y) and y not in self.tokensEspeciales:
+                            if tokens[len(tokens)-2] in self.tokensReservados:
                                 #tipoVar= tokens[len(tokens)-1]
                                 var = Variable(tipoVar, y)
                                 var.alcance = alcance
@@ -198,7 +201,7 @@ class Analizador:
                                 self.guardarEnHashGlobal(var)
                             else:
                                 print("Error linea", contador, ": '" + y + "' parametro no definido\n")
-                        if tipoFuncion != "" and y not in self.especiales and y not in self.hashGlobal:
+                        if tipoFuncion != "" and y not in self.tokensEspeciales and y not in self.hashGlobal:
                             fun = Variable(tipoFuncion,y)
                             fun.alcance = alcance
                             fun.id = "funcion"
@@ -206,15 +209,15 @@ class Analizador:
                             self.guardarEnHashGlobal(fun)
                             funciones.append(fun)
                             continue
-                    if y == self.especiales.get("("):
+                    if y == self.tokensEspeciales.get("("):
                         parentesis = True
                         alcance += 1
                         continue
-                    if y == self.especiales.get(")"):
+                    if y == self.tokensEspeciales.get(")"):
                         parentesis = False
                         alcance -= 1
                         continue
-                    if y == self.especiales.get("{"):
+                    if y == self.tokensEspeciales.get("{"):
                         corchetes = True
                         alcance += 1
                         continue
