@@ -43,7 +43,7 @@ class Analizador:
             return False
 
     #retorna el contenido de un archivo, en forma de array donde cada elemento es una linea del .txt
-    def cargarContArchivo(self,nomArchivo)
+    def cargarContArchivo(self,nomArchivo):
         try:
             archivo = open(nomArchivo, "r", encoding="utf=8")
             lineas = archivo.readlines() 
@@ -63,7 +63,7 @@ class Analizador:
     #Desarrollo de funciones
     def _AnalizadorCodigo(self,nomArchivo):
 
-        linea = cargarContArchivo(nomArchivo)
+        linea = self.cargarContArchivo(nomArchivo)
         #por si hubo algun problema al cargar el contenido del archivo
         if linea == False:
             return
@@ -81,66 +81,59 @@ class Analizador:
         corchetes = False
         funReturn = False
         
-        for x in linea:  #recorre linea por linea del archivo .txt
+        for x in linea:  # ir linea por linea del archivo
             word = x.split()
             if len(word) <= 4:
                 tipoVar = ""
                 for y in word:  # ir recorriendo los tokens de word
                     tokens.append(y)
                     if funIgual:
-                        a = tokens[len(tokens)-3]
-                        x = tokens[len(tokens)-1]
-                        b = self.hashGlobal.get(a)
-                        if self.varInt(x):
-                            if b.tipo == "int":
+                        antes = tokens[len(tokens)-3]
+                        despues = tokens[len(tokens)-1]
+                        antes2 = self.hashGlobal.get(antes)
+                        if self.esNum(despues):
+                            if antes2.tipo == "int":
                                 funIgual = False
                                 continue
-                            elif b.tipo == "float":
-                                print("Error en la linea", contador,": Asignacion incorrecta '" + 
-                                      a + "' (" + b.tipo + ") a 'int')\n")
+                            elif antes2.tipo == "float":
+                                print("Error linea", contador,": Asignacion incorrecta '" + antes + "' (" + antes2.tipo + ") a 'int')\n")
                                 funIgual = False
                                 continue
-                            elif b.tipo == "string":
-                                print("Error en la linea", contador,": Asignacion incorrecta '" + 
-                                      a + "' (" + b.tipo + ") a 'int')\n")
+                            elif antes2.tipo == "string":
+                                print("Error linea", contador,": Asignacion incorrecta '" + antes + "' (" + antes2.tipo + ") a 'int')\n")
                                 funIgual = False
                                 continue
-                        elif self.varFloat(x):
-                            if b.tipo == "float":
+                        elif self.esFloat(despues):
+                            if antes2.tipo == "float":
                                 funIgual = False
                                 continue
-                            elif b.tipo == "int":
-                                print("Error en la linea", contador,": Asignacion incorrecta '" + 
-                                      a + "' (" + b.tipo + ") a 'float')\n")
+                            elif antes2.tipo == "int":
+                                print("Error linea", contador,": Asignacion incorrecta '" + antes + "' (" + antes2.tipo + ") a 'float')\n")
                                 funIgual = False
                                 continue
-                            elif b.tipo == "string":
-                                print("Error en la linea", contador,": Asignacion incorrecta '" + 
-                                      a + "' (" + b.tipo + ") a 'float')\n")
+                            elif antes2.tipo == "string":
+                                print("Error linea", contador,": Asignacion incorrecta '" + antes + "' (" + antes2.tipo + ") a 'float')\n")
                                 funIgual = False
                                 continue
                         elif y[0] == '"' and y[len(y)-1] == '"':
-                            if b.tipo == "string":
+                            if antes2.tipo == "string":
                                 funIgual = False
                                 continue
-                            elif b.tipo == "int":
-                                print("Error en la linea", contador,": Asignacion incorrecta '" + 
-                                      a + "' (" + b.tipo + ") a 'string')\n")
+                            elif antes2.tipo == "int":
+                                print("Error linea", contador,": Asignacion incorrecta '" + antes + "' (" + antes2.tipo + ") a 'string')\n")
                                 funIgual = False
                                 continue
-                            elif b.tipo == "float":
-                                print("Error en la linea", contador,": Asignacion incorrecta '" + 
-                                      a + "' (" + b.tipo + ") a 'string')\n")
+                            elif antes2.tipo == "float":
+                                print("Error linea", contador,": Asignacion incorrecta '" + antes + "' (" + antes2.tipo + ") a 'string')\n")
                                 funIgual = False
                                 continue
-                        elif w in self.hashGlobal:
-                            z = self.hashGlobal.get(w)
-                            if b.tipo == z.tipo:
+                        elif despues in self.hashGlobal:
+                            despues2 = self.hashGlobal.get(despues)
+                            if antes2.tipo == despues2.tipo:
                                 funIgual = False
                                 continue
                             else:
-                                print("Error en la linea", contador, ": Asignacion incorrecta '"+ 
-                                      a +"' ("+b.tipo+") a '"+ w+"' ("+z.tipo+")\n")
+                                print("Error linea", contador, ": Asignacion incorrecta '"+antes+"' ("+antes2.tipo+") a '"+ despues+"' ("+despues2.tipo+")\n")
                                 funIgual = False
                                 continue
                     if funReturn:
@@ -149,84 +142,83 @@ class Analizador:
                             if varAux2.tipo == funciones[len(funciones)-1].tipo:
                                 continue
                             else:
-                                print("Error en la linea", contador, ": '" + y + 
-                                      "' el tipo de retorno no coincide con el tipo de la funcion\n")
+                                print("Error linea", contador, ": '" + y + "' el tipo de retorno no coincide con el tipo de la funcion\n")
                         funReturn = False
-                    if y == self.palabraReservada.get(y):
-                        if y == self.palabraReservada.get("return"):
+                    if y == self.reservada.get(y):
+                        if y == self.reservada.get("return"):
                             funReturn = True
                             continue
                         else:
                             tipoVar = y
                             continue
-                    if (not self.varInt(y) or not self.varFloat(y) or self.varString(y)) and  y not in self.caratecterEspecial:
+                    if (not self.esNum(y) or not self.esFloat(y) or self.esString(y)) and  y not in self.especiales:
                         if tipoVar != "":
                             var = Variable(tipoVar,y)
                             var.alcance = alcance
                             var.id = "variable"
                             var.linea = contador
-                            self.saveGlobalHash(var)
+                            self.guardarEnHashGlobal(var)
                         else:
                             if y[0] == '"' and y[len(y)-1] == '"':
                                 continue
-                            if y != self.caratecterEspecial.get(y) and y not in self.hashGlobal:
-                                print("Error en la linea", contador, ": " + y + " no esta declarada\n")
-                    elif y == self.caratecterEspecial.get("}"):
+                            if y != self.especiales.get(y) and y not in self.hashGlobal:
+                                print("Error linea", contador, ": " + y + " no esta declarada\n")
+                    elif y == self.especiales.get("}"):
                             corchetes = False
                             alcance -= 1
                             continue
-                    elif y == self.caratecterEspecial.get("="):
+                    elif y == self.especiales.get("="):
                         funIgual = True
                         continue
+
             else:
                 tipoVar = ""
                 for y in word:
                     tokens.append(y)
-                    if y == self.palabraReservada.get(y):
+                    if y == self.reservada.get(y):
                         if parentesis:
                             tipoVar = y
                             continue
                         tipoFuncion = y
                         continue
-                    if not self.varInt(y) or not self.varFloat(y) or self.varString(y):
-                        if parentesis and y in self.hashGlobal and not self.varInt(y) and not self.varFloat(y):
+                    if not self.esNum(y) or not self.esFloat(y) or self.esString(y):
+                        if parentesis and y in self.hashGlobal and not self.esNum(y) and not self.esFloat(y):
                             varAux = self.hashGlobal.get(y)
                             if varAux.alcance <= alcance-1:
                                 continue
                             else:
-                                print("Error en la linea", contador, ": '" + y + 
-                                      "' parametro no definido\n")
-                        if parentesis and y not in self.hashGlobal and not self.varInt(y) and not self.varFloat(y) and y not in self.caratecterEspecial:
-                            if tokens[len(tokens)-2] in self.palabraReservada:
+                                print("Error linea", contador, ": '" + y + "' parametro no definido\n")
+                        if parentesis and y not in self.hashGlobal and not self.esNum(y) and not self.esFloat(y) and y not in self.especiales:
+                            if tokens[len(tokens)-2] in self.reservada:
                                 #tipoVar= tokens[len(tokens)-1]
                                 var = Variable(tipoVar, y)
                                 var.alcance = alcance
                                 var.id = "variable"
                                 var.linea = contador
-                                self.saveGlobalHash(var)
+                                self.guardarEnHashGlobal(var)
                             else:
-                                print("Error en la linea", contador, ": '" + y + 
-                                      "' parametro no definido\n")
-                        if tipoFuncion != "" and y not in self.caratecterEspecial and y not in self.hashGlobal:
+                                print("Error linea", contador, ": '" + y + "' parametro no definido\n")
+                        if tipoFuncion != "" and y not in self.especiales and y not in self.hashGlobal:
                             fun = Variable(tipoFuncion,y)
                             fun.alcance = alcance
                             fun.id = "funcion"
                             fun.linea = contador
-                            self.saveGlobalHash(fun)
+                            self.guardarEnHashGlobal(fun)
                             funciones.append(fun)
                             continue
-                    if y == self.caratecterEspecial.get("("):
+                    if y == self.especiales.get("("):
                         parentesis = True
                         alcance += 1
                         continue
-                    if y == self.caratecterEspecial.get(")"):
+                    if y == self.especiales.get(")"):
                         parentesis = False
                         alcance -= 1
                         continue
-                    if y == self.caratecterEspecial.get("{"):
+                    if y == self.especiales.get("{"):
                         corchetes = True
                         alcance += 1
                         continue
+
             contador += 1
 
     def printArchivo(self,nomArchivo):
