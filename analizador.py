@@ -58,7 +58,7 @@ class Analizador:
         self._AnalizadorCodigo(nomArchivo)
 
     def LectorCodigo(self,nomArchivo):
-        self.printArchivo(printArchivo)
+        self.printArchivo(nomArchivo)
 
     #Desarrollo de funciones
     def _AnalizadorCodigo(self,nomArchivo):
