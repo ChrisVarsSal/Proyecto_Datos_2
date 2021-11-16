@@ -87,7 +87,21 @@ class Analizador:
                 tipoVar = ""
                 for y in word:  # ir recorriendo los tokens de word
                     tokens.append(y)
-                    if funIgual:
+                    if y == self.tokensEspeciales.get("="):
+                        funIgual = True
+                        continue
+                    elif y == self.tokensEspeciales.get("}"):
+                            corchetes = False
+                            alcance -= 1
+                            continue
+                    elif y == self.tokensReservados.get(y):
+                        if y == self.tokensReservados.get("return"):
+                            funReturn = True
+                            continue
+                        else:
+                            tipoVar = y
+                            continue
+                    elif funIgual:
                         #ejemplo int x = 2, tokenAnt = x
                         #tokenDes = 2
                         #tokenAnt2 = busca si esa variable(x) ya fue definida
@@ -139,7 +153,7 @@ class Analizador:
                                 print("Error linea", contador, ": Asignacion incorrecta '"+tokenAnt+"' ("+tokenAnt2.tipo+") a '"+ tokenDes+"' ("+tokenDes2.tipo+")\n")
                                 funIgual = False
                                 continue
-                    if funReturn:
+                    elif funReturn:
                         if y in self.hashGlobal:
                             varAux2 = self.hashGlobal.get(y)
                             if varAux2.tipo == funciones[len(funciones)-1].tipo:
@@ -147,14 +161,7 @@ class Analizador:
                             else:
                                 print("Error linea", contador, ": '" + y + "' el tipo de retorno no coincide con el tipo de la funcion\n")
                         funReturn = False
-                    if y == self.tokensReservados.get(y):
-                        if y == self.tokensReservados.get("return"):
-                            funReturn = True
-                            continue
-                        else:
-                            tipoVar = y
-                            continue
-                    if (not self.esNum(y) or not self.esFloat(y) or self.esString(y)) and  y not in self.tokensEspeciales:
+                    elif (not self.esNum(y) or not self.esFloat(y) or self.esString(y)) and  y not in self.tokensEspeciales:
                         if tipoVar != "":
                             var = Variable(tipoVar,y)
                             var.alcance = alcance
@@ -166,13 +173,7 @@ class Analizador:
                                 continue
                             if y != self.tokensEspeciales.get(y) and y not in self.hashGlobal:
                                 print("Error linea", contador, ": " + y + " no esta declarada\n")
-                    elif y == self.tokensEspeciales.get("}"):
-                            corchetes = False
-                            alcance -= 1
-                            continue
-                    elif y == self.tokensEspeciales.get("="):
-                        funIgual = True
-                        continue
+                    
 
             else:
                 tipoVar = ""
