@@ -11,15 +11,15 @@ while True:
     print("3.Salir")
     opcion = input()
     if opcion == "1":
-        analisisA = analizador.Analizador();
-        analisisA.LectorCodigo("CodigoCorrecto.txt")
+        analisisA = analizador.Analizador()
+        analisisA.LectorCodigo("C:/Users/deine/Desktop/P2ED/Proyecto_Datos_2/CodigoCorrecto.txt")
         print("\n")
-        analisisA.AnalizarCodigoFuente("CodigoCorrecto.txt")
+        analisisA.AnalizadorCodigo("C:/Users/deine/Desktop/P2ED/Proyecto_Datos_2/CodigoCorrecto.txt")
     elif opcion == "2":
         analisisB = analizador.Analizador()
-        analisisB.LectorCodigo("CodigoIncorrecto.txt")
+        analisisB.LectorCodigo("C:/Users/deine/Desktop/P2ED/Proyecto_Datos_2/CodigoIncorrecto.txt")
         print("\n")
-        analisisB.AnalizadorCodigo("CodigoIncorrecto.txt")
+        analisisB.AnalizadorCodigo("C:/Users/deine/Desktop/P2ED/Proyecto_Datos_2/CodigoIncorrecto.txt")
     elif opcion == "3":
         break
 

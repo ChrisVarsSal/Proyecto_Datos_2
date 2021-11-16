@@ -108,7 +108,7 @@ class Analizador:
                         tokenAnt = tokens[len(tokens)-3]
                         tokenDes = tokens[len(tokens)-1]
                         tokenAnt2 = self.hashGlobal.get(tokenAnt)
-                        if self.esNum(tokenDes):
+                        if self.varInt(tokenDes):
                             if tokenAnt2.tipo == "int":
                                 funIgual = False
                                 continue
@@ -120,7 +120,7 @@ class Analizador:
                                 print("Error linea", contador,": Asignacion incorrecta '" + tokenAnt + "' (" + tokenAnt2.tipo + ") a 'int')\n")
                                 funIgual = False
                                 continue
-                        elif self.esFloat(tokenDes):
+                        elif self.varFloat(tokenDes):
                             if tokenAnt2.tipo == "float":
                                 funIgual = False
                                 continue
@@ -161,13 +161,13 @@ class Analizador:
                             else:
                                 print("Error linea", contador, ": '" + y + "' el tipo de retorno no coincide con el tipo de la funcion\n")
                         funReturn = False
-                    elif (not self.esNum(y) or not self.esFloat(y) or self.esString(y)) and  y not in self.tokensEspeciales:
+                    elif (not self.varInt(y) or not self.varFloat(y) or self.varString(y)) and  y not in self.tokensEspeciales:
                         if tipoVar != "":
                             var = Variable(tipoVar,y)
                             var.alcance = alcance
                             var.id = "variable"
                             var.linea = contador
-                            self.guardarEnHashGlobal(var)
+                            self.saveGlobalHash(var)
                         else:
                             if y[0] == '"' and y[len(y)-1] == '"':
                                 continue
@@ -197,21 +197,21 @@ class Analizador:
                             continue
                         tipoFuncion = y
                         continue
-                    elif not self.esNum(y) or not self.esFloat(y) or self.esString(y):
-                        if parentesis and y in self.hashGlobal and not self.esNum(y) and not self.esFloat(y):
+                    elif not self.varInt(y) or not self.varFloat(y) or self.varString(y):
+                        if parentesis and y in self.hashGlobal and not self.varInt(y) and not self.varFloat(y):
                             varAux = self.hashGlobal.get(y)
                             if varAux.alcance <= alcance-1:
                                 continue
                             else:
                                 print("Error linea", contador, ": '" + y + "' parametro no definido\n")
-                        if parentesis and y not in self.hashGlobal and not self.esNum(y) and not self.esFloat(y) and y not in self.tokensEspeciales:
+                        if parentesis and y not in self.hashGlobal and not self.varInt(y) and not self.varFloat(y) and y not in self.tokensEspeciales:
                             if tokens[len(tokens)-2] in self.tokensReservados:
                                 #tipoVar= tokens[len(tokens)-1]
                                 var = Variable(tipoVar, y)
                                 var.alcance = alcance
                                 var.id = "variable"
                                 var.linea = contador
-                                self.guardarEnHashGlobal(var)
+                                self.saveGlobalHash(var)
                             else:
                                 print("Error linea", contador, ": '" + y + "' parametro no definido\n")
                         if tipoFuncion != "" and y not in self.tokensEspeciales and y not in self.hashGlobal:
@@ -219,7 +219,7 @@ class Analizador:
                             fun.alcance = alcance
                             fun.id = "funcion"
                             fun.linea = contador
-                            self.guardarEnHashGlobal(fun)
+                            self.saveGlobalHash(fun)
                             funciones.append(fun)
                             continue
 
