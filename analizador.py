@@ -179,13 +179,25 @@ class Analizador:
                 tipoVar = ""
                 for y in word:
                     tokens.append(y)
-                    if y == self.tokensReservados.get(y):
+                    if y == self.tokensEspeciales.get("("):
+                        parentesis = True
+                        alcance += 1
+                        continue
+                    elif y == self.tokensEspeciales.get(")"):
+                        parentesis = False
+                        alcance -= 1
+                        continue
+                    elif y == self.tokensEspeciales.get("{"):
+                        corchetes = True
+                        alcance += 1
+                        continue
+                    elif y == self.tokensReservados.get(y):
                         if parentesis:
                             tipoVar = y
                             continue
                         tipoFuncion = y
                         continue
-                    if not self.esNum(y) or not self.esFloat(y) or self.esString(y):
+                    elif not self.esNum(y) or not self.esFloat(y) or self.esString(y):
                         if parentesis and y in self.hashGlobal and not self.esNum(y) and not self.esFloat(y):
                             varAux = self.hashGlobal.get(y)
                             if varAux.alcance <= alcance-1:
@@ -210,20 +222,9 @@ class Analizador:
                             self.guardarEnHashGlobal(fun)
                             funciones.append(fun)
                             continue
-                    if y == self.tokensEspeciales.get("("):
-                        parentesis = True
-                        alcance += 1
-                        continue
-                    if y == self.tokensEspeciales.get(")"):
-                        parentesis = False
-                        alcance -= 1
-                        continue
-                    if y == self.tokensEspeciales.get("{"):
-                        corchetes = True
-                        alcance += 1
-                        continue
 
             contador += 1
+
 
     def printArchivo(self,nomArchivo):
         archivo = open(nomArchivo, "r", encoding="utf=8")
