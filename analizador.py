@@ -91,9 +91,9 @@ class Analizador:
                         funIgual = True
                         continue
                     elif y == self.tokensEspeciales.get("}"):
-                            corchetes = False
-                            alcance -= 1
-                            continue
+                        corchetes = False
+                        alcance -= 1
+                        continue
                     elif y == self.tokensReservados.get(y):
                         if y == self.tokensReservados.get("return"):
                             funReturn = True
@@ -157,6 +157,7 @@ class Analizador:
                         if y in self.hashGlobal:
                             varAux2 = self.hashGlobal.get(y)
                             if varAux2.tipo == funciones[len(funciones)-1].tipo:
+                                funReturn = False
                                 continue
                             else:
                                 print("Error linea", contador, ": '" + y + "' el tipo de retorno no coincide con el tipo de la funcion\n")
