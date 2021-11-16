@@ -88,52 +88,52 @@ class Analizador:
                 for y in word:  # ir recorriendo los tokens de word
                     tokens.append(y)
                     if funIgual:
-                        antes = tokens[len(tokens)-3]
-                        despues = tokens[len(tokens)-1]
-                        antes2 = self.hashGlobal.get(antes)
-                        if self.esNum(despues):
-                            if antes2.tipo == "int":
+                        tokenAnt = tokens[len(tokens)-3]
+                        tokenDes = tokens[len(tokens)-1]
+                        tokenAnt2 = self.hashGlobal.get(tokenAnt)
+                        if self.esNum(tokenDes):
+                            if tokenAnt2.tipo == "int":
                                 funIgual = False
                                 continue
-                            elif antes2.tipo == "float":
-                                print("Error linea", contador,": Asignacion incorrecta '" + antes + "' (" + antes2.tipo + ") a 'int')\n")
+                            elif tokenAnt2.tipo == "float":
+                                print("Error linea", contador,": Asignacion incorrecta '" + tokenAnt + "' (" + tokenAnt2.tipo + ") a 'int')\n")
                                 funIgual = False
                                 continue
-                            elif antes2.tipo == "string":
-                                print("Error linea", contador,": Asignacion incorrecta '" + antes + "' (" + antes2.tipo + ") a 'int')\n")
+                            elif tokenAnt2.tipo == "string":
+                                print("Error linea", contador,": Asignacion incorrecta '" + tokenAnt + "' (" + tokenAnt2.tipo + ") a 'int')\n")
                                 funIgual = False
                                 continue
-                        elif self.esFloat(despues):
-                            if antes2.tipo == "float":
+                        elif self.esFloat(tokenDes):
+                            if tokenAnt2.tipo == "float":
                                 funIgual = False
                                 continue
-                            elif antes2.tipo == "int":
-                                print("Error linea", contador,": Asignacion incorrecta '" + antes + "' (" + antes2.tipo + ") a 'float')\n")
+                            elif tokenAnt2.tipo == "int":
+                                print("Error linea", contador,": Asignacion incorrecta '" + tokenAnt + "' (" + tokenAnt2.tipo + ") a 'float')\n")
                                 funIgual = False
                                 continue
-                            elif antes2.tipo == "string":
-                                print("Error linea", contador,": Asignacion incorrecta '" + antes + "' (" + antes2.tipo + ") a 'float')\n")
+                            elif tokenAnt2.tipo == "string":
+                                print("Error linea", contador,": Asignacion incorrecta '" + tokenAnt + "' (" + tokenAnt2.tipo + ") a 'float')\n")
                                 funIgual = False
                                 continue
                         elif y[0] == '"' and y[len(y)-1] == '"':
-                            if antes2.tipo == "string":
+                            if tokenAnt2.tipo == "string":
                                 funIgual = False
                                 continue
-                            elif antes2.tipo == "int":
-                                print("Error linea", contador,": Asignacion incorrecta '" + antes + "' (" + antes2.tipo + ") a 'string')\n")
+                            elif tokenAnt2.tipo == "int":
+                                print("Error linea", contador,": Asignacion incorrecta '" + tokenAnt + "' (" + tokenAnt2.tipo + ") a 'string')\n")
                                 funIgual = False
                                 continue
-                            elif antes2.tipo == "float":
-                                print("Error linea", contador,": Asignacion incorrecta '" + antes + "' (" + antes2.tipo + ") a 'string')\n")
+                            elif tokenAnt2.tipo == "float":
+                                print("Error linea", contador,": Asignacion incorrecta '" + tokenAnt + "' (" + tokenAnt2.tipo + ") a 'string')\n")
                                 funIgual = False
                                 continue
-                        elif despues in self.hashGlobal:
-                            despues2 = self.hashGlobal.get(despues)
-                            if antes2.tipo == despues2.tipo:
+                        elif tokenDes in self.hashGlobal:
+                            tokenDes2 = self.hashGlobal.get(tokenDes)
+                            if tokenAnt2.tipo == tokenDes2.tipo:
                                 funIgual = False
                                 continue
                             else:
-                                print("Error linea", contador, ": Asignacion incorrecta '"+antes+"' ("+antes2.tipo+") a '"+ despues+"' ("+despues2.tipo+")\n")
+                                print("Error linea", contador, ": Asignacion incorrecta '"+tokenAnt+"' ("+tokenAnt2.tipo+") a '"+ tokenDes+"' ("+tokenDes2.tipo+")\n")
                                 funIgual = False
                                 continue
                     if funReturn:
